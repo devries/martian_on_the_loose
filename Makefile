@@ -4,7 +4,7 @@ container_name := martian
 full_name := gcr.io/$(project_id)/$(container_name):latest
 port := 3333
 
-.PHONY: debug build push deploy run
+.PHONY: debug build push deploy run stop
 
 debug:
 	@echo $(WEBFILES)
@@ -28,6 +28,11 @@ deploy.stamp: push.stamp
 
 deploy: deploy.stamp
 
-run:
+run: build.stamp
 	@echo Running container martian on 127.0.0.1:$(port)
 	docker run -d --name martian -e PORT=8080 -p 127.0.0.1:$(port):8080 $(full_name)
+
+stop:
+	@echo Stopping and removing docker container
+	docker stop martian
+	docker rm martian
